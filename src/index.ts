@@ -1,14 +1,25 @@
 import process from 'process';
-import {Client, RichEmbed, MessageOptions} from 'discord.js';
+import {Client, RichEmbed} from 'discord.js';
 import axios from 'axios';
 import pttParser from './ptt-parser';
 
-async function handleCommand(command: string): Promise<MessageOptions|null> {
-  const imagesMap: {[keyword: string]: string} = {
-    '佛心公司': 'https://i.imgur.com/Y4RQpGs.gif',
-    '可憐哪': 'https://i.imgur.com/A7EsByc.jpg',
-  };
-  return imagesMap[command] ? { files: [imagesMap[command]] } : null;
+function randomPick<T>(array: T[]) {
+  const index = Math.floor(Math.random() * array.length);
+  return array[index];
+}
+
+async function handleCommand(command: string): Promise<RichEmbed|null> {
+  switch (command) {
+  case '佛心公司':
+    return new RichEmbed().
+      setImage('https://i.imgur.com/Y4RQpGs.gif').
+      setFooter('╰(⊙Д⊙)╮佛心公司╭(⊙Д⊙)╯佛心公司╰(⊙Д⊙)╮佛心公司');
+  case '可憐哪':
+    return new RichEmbed().
+      setImage(randomPick(['https://i.imgur.com/A7EsByc.jpg', 'https://i.imgur.com/Sa7zqxS.jpg']));
+  default:
+  }
+  return null;
 }
 
 async function createPTTEmbed(url: string): Promise<RichEmbed|null> {
@@ -42,7 +53,7 @@ bot.on('ready', () => {
     return;
   }
   const content = message.content;
-  let msg: RichEmbed | MessageOptions | null = null;
+  let msg: RichEmbed | null = null;
   try {
     let match: RegExpMatchArray | null;
     if (content.charAt(0) === '!') {
