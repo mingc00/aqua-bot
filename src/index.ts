@@ -16,7 +16,7 @@ async function handleCommand(command: string): Promise<RichEmbed|null> {
       setFooter('╰(⊙Д⊙)╮佛心公司╭(⊙Д⊙)╯佛心公司╰(⊙Д⊙)╮佛心公司');
   case '可憐哪':
     return new RichEmbed().
-      setImage(randomPick(['https://i.imgur.com/A7EsByc.jpg', 'https://i.imgur.com/Sa7zqxS.jpg']));
+      setImage(randomPick(['https://i.imgur.com/isTHE67.jpg', 'https://i.imgur.com/MMDG8Jp.jpg']));
   default:
   }
   return null;
@@ -56,7 +56,7 @@ bot.on('ready', () => {
   let msg: RichEmbed | null = null;
   try {
     let match: RegExpMatchArray | null;
-    if (content.charAt(0) === '!') {
+    if (['!', '！'].includes(content.charAt(0))) {
       msg = await handleCommand(content.slice(1));
     } else if ((match = content.match(/https?:\/\/www.ptt.cc\/bbs\/Gossiping\/[\w.]+.html/))) {
       msg = await createPTTEmbed(match[0]);
