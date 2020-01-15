@@ -35,7 +35,8 @@ async function createPTTEmbed(url: string): Promise<RichEmbed|null> {
 const bot = new Client();
 
 bot.on('ready', () => {
-  console.log('I am ready');
+  console.log('Aqua bot is ready');
+  console.log(`https://discordapp.com/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&scope=bot&permissions=0`);
 }).on('message', async (message) => {
   if (message.author.bot) {
     return;
