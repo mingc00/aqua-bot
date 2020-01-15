@@ -1,0 +1,10 @@
+version: '3'
+services:
+  bot:
+    image: node:lts-alpine
+    volumes:
+      - .:/mnt
+    working_dir: /mnt
+    env_file:
+      - discord.env
+    entrypoint: npm start

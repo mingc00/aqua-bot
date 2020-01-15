@@ -1,0 +1,20 @@
+{
+  "name": "aqua-bot",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "start": "node .",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "axios": "^0.19.1",
+    "discord.js": "^11.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^13.1.7",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.4"
+  }
+}
