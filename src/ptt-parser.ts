@@ -4,7 +4,11 @@ function matchMeta(content: string, property: string): string | null {
   return r ? r[1] : null;
 }
 
-function pttParser(html: string) {
+function pttParser(html: string): {
+  title: string,
+  description: string,
+  author: string
+} {
   return {
     title: matchMeta(html, 'og:title') || '',
     description: matchMeta(html, 'og:description') || '',

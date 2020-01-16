@@ -2,24 +2,12 @@ import process from 'process';
 import {Client, RichEmbed} from 'discord.js';
 import axios from 'axios';
 import pttParser from './ptt-parser';
+import ImageCommandHandler from './image-commands';
 
-function randomPick<T>(array: T[]) {
-  const index = Math.floor(Math.random() * array.length);
-  return array[index];
-}
+const imageCommandHandler =  new ImageCommandHandler();
 
 async function handleCommand(command: string): Promise<RichEmbed|null> {
-  switch (command) {
-  case '佛心公司':
-    return new RichEmbed().
-      setImage('https://i.imgur.com/Y4RQpGs.gif').
-      setFooter('╰(⊙Д⊙)╮佛心公司╭(⊙Д⊙)╯佛心公司╰(⊙Д⊙)╮佛心公司');
-  case '可憐哪':
-    return new RichEmbed().
-      setImage(randomPick(['https://i.imgur.com/isTHE67.jpg', 'https://i.imgur.com/MMDG8Jp.jpg']));
-  default:
-  }
-  return null;
+  return imageCommandHandler.get(command);
 }
 
 async function createPTTEmbed(url: string): Promise<RichEmbed|null> {
@@ -33,11 +21,14 @@ async function createPTTEmbed(url: string): Promise<RichEmbed|null> {
     if (!result) {
       return null;
     }
+    const {title, author, description} = result;
     return new RichEmbed().
       setURL(url).
-      setTitle(result.title).
-      setAuthor(result.author).
-      setDescription(result.description);
+      setTitle(title).
+      setAuthor(author).
+      setDescription(
+        description.length > 100 ? `${description.substr(0, 100)}...` : description
+      );
   } catch (e) {
     return null;
   }
@@ -68,6 +59,6 @@ bot.on('ready', () => {
   if (msg) {
     message.channel.send(msg);
   }
-}).on('error', () => {});
+}).on('error', () => {/* ignore */});
 
 bot.login(process.env.DISCORD_TOKEN);
