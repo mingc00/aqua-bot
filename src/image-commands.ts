@@ -1,5 +1,5 @@
 import {promises as fsPromises} from 'fs';
-import {RichEmbed} from 'discord.js';
+import {MessageEmbed} from 'discord.js';
 
 export default class ImageCommandHandler {
   private images: {
@@ -23,13 +23,13 @@ export default class ImageCommandHandler {
     } catch (e) {}
   }
 
-  public get(command: string): RichEmbed | null {
+  public get(command: string): MessageEmbed | null {
     const r = this.images[command];
     if (!r || r.urls.length === 0) {
       return null;
     }
     const url = randomPick(r.urls);
-    const embed = new RichEmbed().setImage(url);
+    const embed = new MessageEmbed().setImage(url);
     if (r.footer) {
       embed.setFooter(r.footer);
     }

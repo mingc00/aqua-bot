@@ -1,16 +1,16 @@
 import process from 'process';
-import {Client, RichEmbed} from 'discord.js';
+import {Client, MessageEmbed} from 'discord.js';
 import axios from 'axios';
 import pttParser from './ptt-parser';
 import ImageCommandHandler from './image-commands';
 
 const imageCommandHandler =  new ImageCommandHandler();
 
-async function handleCommand(command: string): Promise<RichEmbed|null> {
+async function handleCommand(command: string): Promise<MessageEmbed|null> {
   return imageCommandHandler.get(command);
 }
 
-async function createPTTEmbed(url: string): Promise<RichEmbed|null> {
+async function createPTTEmbed(url: string): Promise<MessageEmbed|null> {
   try {
     const response = await axios.get(url, {
       headers: {
@@ -22,7 +22,7 @@ async function createPTTEmbed(url: string): Promise<RichEmbed|null> {
       return null;
     }
     const {title, author, description} = result;
-    return new RichEmbed().
+    return new MessageEmbed().
       setURL(url).
       setTitle(title).
       setAuthor(author).
@@ -40,11 +40,11 @@ bot.on('ready', () => {
   console.log('Aqua bot is ready');
   console.log(`https://discordapp.com/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&scope=bot&permissions=0`);
 }).on('message', async (message) => {
-  if (message.author.bot) {
+  if (!message.author || message.author.bot || !message.content) {
     return;
   }
   const content = message.content;
-  let msg: RichEmbed | null = null;
+  let msg: MessageEmbed | null = null;
   try {
     let match: RegExpMatchArray | null;
     if (['!', '！'].includes(content.charAt(0))) {
@@ -57,7 +57,7 @@ bot.on('ready', () => {
   }
 
   if (msg) {
-    message.channel.send(msg);
+    message.channel?.send(msg);
   }
 }).on('error', () => {/* ignore */});
 
