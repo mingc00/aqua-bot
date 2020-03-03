@@ -34,6 +34,11 @@ async function createPTTEmbed(url: string): Promise<MessageEmbed|null> {
   }
 }
 
+function notInQuote(str: string, position: number | undefined): boolean {
+  const startIndex = str.lastIndexOf('\n', position);
+  return !str.slice(startIndex + 1, position).includes('>');
+}
+
 const bot = new Client();
 
 bot.on('ready', () => {
@@ -49,7 +54,7 @@ bot.on('ready', () => {
     let match: RegExpMatchArray | null;
     if (['!', '！'].includes(content.charAt(0))) {
       msg = await handleCommand(content.slice(1));
-    } else if ((match = content.match(/https?:\/\/www.ptt.cc\/bbs\/Gossiping\/[\w.]+.html/))) {
+    } else if ((match = content.match(/https?:\/\/www.ptt.cc\/bbs\/Gossiping\/[\w.]+.html/)) && notInQuote(content, match.index)) {
       msg = await createPTTEmbed(match[0]);
     }
   } catch (e) {
