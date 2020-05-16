@@ -54,7 +54,7 @@ bot.on('ready', () => {
     let match: RegExpMatchArray | null;
     if (['!', '！'].includes(content.charAt(0))) {
       msg = await handleCommand(content.slice(1));
-    } else if ((match = content.match(/https?:\/\/www.ptt.cc\/bbs\/Gossiping\/[\w.]+.html/)) && notInQuote(content, match.index)) {
+    } else if ((match = content.match(/https?:\/\/www.ptt.cc\/bbs\/gossiping\/[\w.]+.html/)) && notInQuote(content, match.index)) {
       msg = await createPTTEmbed(match[0]);
     }
   } catch (e) {
