@@ -1,5 +1,5 @@
 import process from 'process';
-import { Client, MessageEmbed } from 'discord.js';
+import { APIMessage, Client, MessageEmbed } from 'discord.js';
 import axios from 'axios';
 import pttParser from './ptt-parser.js';
 import ImageCommandHandler from './image-commands.js';
@@ -82,7 +82,7 @@ bot
       return;
     }
     const content = message.content;
-    let msg: MessageEmbed | null = null;
+    let embed: MessageEmbed | null = null;
     try {
       let match: RegExpMatchArray | null;
       if (
@@ -91,14 +91,30 @@ bot
         )) &&
         notInQuote(content, match.index)
       ) {
-        msg = await createPTTEmbed(match[0]);
+        embed = await createPTTEmbed(match[0]);
       }
     } catch (e) {
       console.error(e);
     }
 
-    if (msg) {
-      message.channel?.send(msg);
+    if (embed && message.channel) {
+      const apiMessage = APIMessage.create(message.channel, undefined, embed);
+      apiMessage.resolveData = function (): APIMessage {
+        APIMessage.prototype.resolveData.call(this);
+        if (
+          !Object.prototype.hasOwnProperty.call(this.data, 'message_reference')
+        ) {
+          this.data = {
+            ...this.data,
+            message_reference: {
+              message_id: message.id,
+              channel_id: message.channel.id,
+            },
+          };
+        }
+        return this;
+      };
+      message.channel.send(apiMessage);
     }
   })
   .on('error', () => {
