@@ -1,12 +1,13 @@
-import { promises as fsPromises } from 'fs';
+import fs from 'fs';
 import { MessageEmbed } from 'discord.js';
 
 export default class ImageCommandHandler {
   private images: {
     [command: string]: {
-      urls: string[],
-      footer?: string
-    }
+      description: string;
+      urls: string[];
+      footer?: string;
+    };
   };
 
   constructor() {
@@ -14,15 +15,26 @@ export default class ImageCommandHandler {
     this.load();
   }
 
-  private async load(): Promise<void> {
+  private load(): void {
     try {
       const images = JSON.parse(
-        await fsPromises.readFile('./commands/images.json', 'utf-8')
+        fs.readFileSync('./commands/images.json', 'utf-8')
       );
       if (typeof images === 'object') {
         this.images = images;
       }
     } catch (e) {}
+  }
+
+  public getChoices(): CommandChoice[] {
+    return Object.keys(this.images).map((k) => {
+      const image = this.images[k];
+      return {
+        name: image.description,
+        value: k,
+        description: image.footer,
+      };
+    });
   }
 
   public get(command: string): MessageEmbed | null {
@@ -42,4 +54,10 @@ export default class ImageCommandHandler {
 function randomPick<T>(array: T[]): T {
   const index = Math.floor(Math.random() * array.length);
   return array[index];
+}
+
+interface CommandChoice {
+  name: string;
+  value: string;
+  description?: string;
 }
