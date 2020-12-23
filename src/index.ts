@@ -1,8 +1,8 @@
 import process from 'process';
 import { Client, MessageEmbed } from 'discord.js';
 import axios from 'axios';
-import pttParser from './ptt-parser';
-import ImageCommandHandler from './image-commands';
+import pttParser from './ptt-parser.js';
+import ImageCommandHandler from './image-commands.js';
 
 const imageCommandHandler = new ImageCommandHandler();
 

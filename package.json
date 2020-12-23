@@ -1,7 +1,8 @@
 {
   "name": "aqua-bot",
+  "type": "module",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "exports": "./dist/index.js",
   "license": "MIT",
   "scripts": {
     "lint": "eslint --ext ts,js src --fix",
