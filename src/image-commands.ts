@@ -1,5 +1,5 @@
-import {promises as fsPromises} from 'fs';
-import {MessageEmbed} from 'discord.js';
+import { promises as fsPromises } from 'fs';
+import { MessageEmbed } from 'discord.js';
 
 export default class ImageCommandHandler {
   private images: {
@@ -16,7 +16,9 @@ export default class ImageCommandHandler {
 
   private async load(): Promise<void> {
     try {
-      const images = JSON.parse(await fsPromises.readFile('./commands/images.json', 'utf-8'));
+      const images = JSON.parse(
+        await fsPromises.readFile('./commands/images.json', 'utf-8')
+      );
       if (typeof images === 'object') {
         this.images = images;
       }
