@@ -2,6 +2,7 @@ import process from 'process';
 import { APIMessage, Client, MessageEmbed } from 'discord.js';
 import axios from 'axios';
 import pttParser from './ptt-parser.js';
+import fbParser from './fb-parser.js';
 import ImageCommandHandler from './image-commands.js';
 import { SlashCommandController } from './slash-command.js';
 
@@ -9,6 +10,34 @@ const APP_ID = process.env.DISCORD_CLIENT_ID || '';
 const BOT_TOKEN = process.env.DISCORD_TOKEN || '';
 
 const imageCommandHandler = new ImageCommandHandler();
+
+function createMessageEmbed({
+  url,
+  title,
+  author,
+  description,
+  thumbnail,
+}: {
+  url: string;
+  title: string;
+  author: string;
+  description: string;
+  thumbnail?: string;
+}) {
+  const embed = new MessageEmbed()
+    .setURL(url)
+    .setTitle(title)
+    .setAuthor(author)
+    .setDescription(
+      description.length > 100
+        ? `${description.substr(0, 100)}...`
+        : description
+    );
+  if (thumbnail) {
+    embed.setThumbnail(thumbnail);
+  }
+  return embed;
+}
 
 async function createPTTEmbed(url: string): Promise<MessageEmbed | null> {
   try {
@@ -21,16 +50,23 @@ async function createPTTEmbed(url: string): Promise<MessageEmbed | null> {
     if (!result) {
       return null;
     }
-    const { title, author, description } = result;
-    return new MessageEmbed()
-      .setURL(url)
-      .setTitle(title)
-      .setAuthor(author)
-      .setDescription(
-        description.length > 100
-          ? `${description.substr(0, 100)}...`
-          : description
-      );
+    return createMessageEmbed({ ...result, url });
+  } catch (e) {
+    return null;
+  }
+}
+
+async function createFbEmbed(path: string): Promise<MessageEmbed | null> {
+  try {
+    const response = await axios.get(`https://mbasic.facebook.com/${path}`);
+    const result = fbParser(response.data);
+    if (!result) {
+      return null;
+    }
+    return createMessageEmbed({
+      ...result,
+      url: `https://www.facebook.com/${path}`,
+    });
   } catch (e) {
     return null;
   }
@@ -92,6 +128,11 @@ bot
         notInQuote(content, match.index)
       ) {
         embed = await createPTTEmbed(match[0]);
+      } else if (
+        (match = content.match(/https:\/\/www.facebook.com\/([\w./]+)/)) &&
+        notInQuote(content, match.index)
+      ) {
+        embed = await createFbEmbed(match[1]);
       }
     } catch (e) {
       console.error(e);
