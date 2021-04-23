@@ -7,5 +7,5 @@ services:
     working_dir: /mnt
     env_file:
       - discord.env
-    entrypoint: npm start
+    entrypoint: sh -c 'yarn install && yarn start'
     restart: always
