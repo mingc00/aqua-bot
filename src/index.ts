@@ -77,6 +77,11 @@ function notInQuote(str: string, position: number | undefined): boolean {
   return !str.slice(startIndex + 1, position).includes('>');
 }
 
+function matchURL(re: RegExp, content: string): RegExpMatchArray | null {
+  const match = content.match(re);
+  return match && notInQuote(content, match.index) ? match : null;
+}
+
 new SlashCommandController(APP_ID, BOT_TOKEN).create({
   name: 'post',
   description: '貼文',
@@ -96,8 +101,9 @@ const bot = new Client();
 bot
   .on('ready', () => {
     console.log('Aqua bot is ready');
+    // Manage Message
     console.log(
-      `https://discord.com/api/oauth2/authorize?client_id=${APP_ID}&permissions=0&scope=bot%20applications.commands`
+      `https://discord.com/api/oauth2/authorize?client_id=${APP_ID}&permissions=8192&scope=bot%20applications.commands`
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     SlashCommandController.registerHandler(bot, 'post', (options: any) => {
@@ -122,16 +128,18 @@ bot
     try {
       let match: RegExpMatchArray | null;
       if (
-        (match = content.match(
-          /https?:\/\/www.ptt.cc\/bbs\/gossiping\/[\w.]+.html/i
-        )) &&
-        notInQuote(content, match.index)
+        (match = matchURL(
+          /https?:\/\/www.ptt.cc\/bbs\/gossiping\/[\w.]+.html/i,
+          content
+        ))
       ) {
         embed = await createPTTEmbed(match[0]);
       } else if (
-        (match = content.match(/https:\/\/www.facebook.com\/([\w./]+)/)) &&
-        notInQuote(content, match.index)
+        (match = matchURL(/https:\/\/www.facebook.com\/([\w./]+)/, content))
       ) {
+        if (message.embeds[0]?.title === 'Log into Facebook') {
+          message.suppressEmbeds(true);
+        }
         embed = await createFbEmbed(match[1]);
       }
     } catch (e) {
