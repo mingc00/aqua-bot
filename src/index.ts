@@ -135,11 +135,12 @@ bot
       ) {
         embed = await createPTTEmbed(match[0]);
       } else if (
-        (match = matchURL(/https:\/\/www.facebook.com\/([\w./]+)/, content))
+        (match = matchURL(
+          /https:\/\/(?:www|m).facebook.com\/([\w.]+\/[\w./]+)/,
+          content
+        ))
       ) {
-        if (message.embeds[0]?.title === 'Log into Facebook') {
-          message.suppressEmbeds(true);
-        }
+        message.suppressEmbeds(true);
         embed = await createFbEmbed(match[1]);
       }
     } catch (e) {
