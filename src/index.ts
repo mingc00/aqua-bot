@@ -3,6 +3,7 @@ import { APIMessage, Client, MessageEmbed } from 'discord.js';
 import axios from 'axios';
 import pttParser from './ptt-parser.js';
 import fbParser from './fb-parser.js';
+import wikipediaParser from './wikipedia-parser.js';
 import ImageCommandHandler from './image-commands.js';
 import { SlashCommandController } from './slash-command.js';
 
@@ -14,25 +15,28 @@ const imageCommandHandler = new ImageCommandHandler();
 function createMessageEmbed({
   url,
   title,
-  author,
-  description,
+  author = '',
+  description = '',
   thumbnail,
 }: {
   url: string;
   title: string;
-  author: string;
-  description: string;
+  author?: string;
+  description?: string;
   thumbnail?: string;
 }) {
   const embed = new MessageEmbed()
     .setURL(url)
     .setTitle(title)
-    .setAuthor(author)
     .setDescription(
       description.length > 100
         ? `${description.substr(0, 100)}...`
         : description
     );
+
+  if (author) {
+    embed.setAuthor(author);
+  }
   if (thumbnail) {
     embed.setThumbnail(thumbnail);
   }
@@ -66,6 +70,26 @@ async function createFbEmbed(path: string): Promise<MessageEmbed | null> {
     return createMessageEmbed({
       ...result,
       url: `https://www.facebook.com/${path}`,
+    });
+  } catch (e) {
+    return null;
+  }
+}
+
+async function createWikipediaEmbed(url: string): Promise<MessageEmbed | null> {
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        'Accept-Language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+      },
+    });
+    const result = wikipediaParser(response.data);
+    if (!result) {
+      return null;
+    }
+    return createMessageEmbed({
+      ...result,
+      url,
     });
   } catch (e) {
     return null;
@@ -142,6 +166,20 @@ bot
       ) {
         message.suppressEmbeds(true);
         embed = await createFbEmbed(match[1]);
+      } else if ((match = matchURL(/https:\/\/fb.watch\/\w+/, content))) {
+        const {
+          request: { path },
+        } = await axios.head(match[0]);
+        message.suppressEmbeds(true);
+        embed = await createFbEmbed(path);
+      } else if (
+        (match = matchURL(
+          /https:\/\/[a-zA-Z0-9]+\.wikipedia\.org\/[^\s]{2,}/,
+          content
+        ))
+      ) {
+        message.suppressEmbeds(true);
+        embed = await createWikipediaEmbed(match[0]);
       }
     } catch (e) {
       console.error(e);
