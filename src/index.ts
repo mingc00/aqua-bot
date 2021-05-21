@@ -3,6 +3,7 @@ import { APIMessage, Client, MessageEmbed } from 'discord.js';
 import { pttParserConfig } from './parser/ptt-parser.js';
 import { fbParserConfig, fbVideoParserConfig } from './parser/fb-parser.js';
 import { wikipediaParserConfig } from './parser/wikipedia-parser.js';
+import { lineTodayParserConfig } from './parser/line-today-parser.js';
 import { createMessageEmbed } from './embed.js';
 import ImageCommandHandler from './image-commands.js';
 import { SlashCommandController } from './slash-command.js';
@@ -71,6 +72,7 @@ bot
         fbParserConfig,
         fbVideoParserConfig,
         wikipediaParserConfig,
+        lineTodayParserConfig,
       ]) {
         const m = matchURL(match, content);
         if (m) {
@@ -102,6 +104,7 @@ bot
         }
         return this;
       };
+      message.suppressEmbeds();
       message.channel.send(apiMessage);
     }
   })
