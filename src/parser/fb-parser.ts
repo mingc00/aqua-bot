@@ -1,6 +1,6 @@
 import axios from 'axios';
 import cheerio from 'cheerio';
-import type { EmbedConfig } from './embed.js';
+import type { EmbedConfig } from '../embed.js';
 
 export default function fbParser(
   html: string

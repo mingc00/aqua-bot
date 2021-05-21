@@ -1,8 +1,8 @@
 import process from 'process';
 import { APIMessage, Client, MessageEmbed } from 'discord.js';
-import { pttParserConfig } from './ptt-parser.js';
-import { fbParserConfig, fbVideoParserConfig } from './fb-parser.js';
-import { wikipediaParserConfig } from './wikipedia-parser.js';
+import { pttParserConfig } from './parser/ptt-parser.js';
+import { fbParserConfig, fbVideoParserConfig } from './parser/fb-parser.js';
+import { wikipediaParserConfig } from './parser/wikipedia-parser.js';
 import { createMessageEmbed } from './embed.js';
 import ImageCommandHandler from './image-commands.js';
 import { SlashCommandController } from './slash-command.js';

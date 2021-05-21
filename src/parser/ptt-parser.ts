@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { EmbedConfig } from './embed.js';
+import type { EmbedConfig } from '../embed.js';
 
 function matchMeta(content: string, property: string): string | null {
   const re = new RegExp(`<meta property="${property}" content="([\\s\\S]*?)"`);
