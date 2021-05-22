@@ -43,7 +43,7 @@ async function createFbEmbed(path: string): Promise<EmbedConfig | null> {
 }
 
 export const fbParserConfig = {
-  match: /https:\/\/(?:www|m).facebook.com\/([\w.]+\/[\w./]+)/,
+  match: /https:\/\/(?:www|m).facebook.com\/([\w./]+)/,
   transform: (m: RegExpMatchArray): Promise<EmbedConfig | null> =>
     createFbEmbed(m[1]),
 };
