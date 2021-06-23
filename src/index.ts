@@ -69,7 +69,7 @@ bot
     try {
       for (const { match, transform } of [
         pttParserConfig,
-        fbParserConfig,
+        // fbParserConfig,
         fbVideoParserConfig,
         wikipediaParserConfig,
         lineTodayParserConfig,
