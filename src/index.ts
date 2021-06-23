@@ -1,7 +1,7 @@
 import process from 'process';
-import { APIMessage, Client, MessageEmbed } from 'discord.js';
+import { APIMessage, Client, MessageEmbed, Intents } from 'discord.js';
 import { pttParserConfig } from './parser/ptt-parser.js';
-import { fbParserConfig, fbVideoParserConfig } from './parser/fb-parser.js';
+import { fbVideoParserConfig } from './parser/fb-parser.js';
 import { wikipediaParserConfig } from './parser/wikipedia-parser.js';
 import { lineTodayParserConfig } from './parser/line-today-parser.js';
 import { createMessageEmbed } from './embed.js';
@@ -37,7 +37,9 @@ new SlashCommandController(APP_ID, BOT_TOKEN).create({
   ],
 });
 
-const bot = new Client();
+const bot = new Client({
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+});
 
 bot
   .on('ready', () => {
@@ -69,7 +71,6 @@ bot
     try {
       for (const { match, transform } of [
         pttParserConfig,
-        // fbParserConfig,
         fbVideoParserConfig,
         wikipediaParserConfig,
         lineTodayParserConfig,
@@ -88,23 +89,13 @@ bot
     }
 
     if (embed && message.channel) {
-      const apiMessage = APIMessage.create(message.channel, undefined, embed);
-      apiMessage.resolveData = function (): APIMessage {
-        APIMessage.prototype.resolveData.call(this);
-        if (
-          !Object.prototype.hasOwnProperty.call(this.data, 'message_reference')
-        ) {
-          this.data = {
-            ...this.data,
-            message_reference: {
-              message_id: message.id,
-              channel_id: message.channel.id,
-            },
-          };
-        }
-        return this;
-      };
-      message.suppressEmbeds();
+      const apiMessage = APIMessage.create(message.channel, {
+        embeds: [embed],
+        reply: {
+          messageReference: message,
+        },
+      });
+      message.suppressEmbeds(true);
       message.channel.send(apiMessage);
     }
   })
