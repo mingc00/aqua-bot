@@ -36,7 +36,7 @@ async function createWikipediaEmbed(url: string): Promise<EmbedConfig | null> {
 }
 
 export const wikipediaParserConfig = {
-  match: /https:\/\/[a-zA-Z0-9]+\.wikipedia\.org\/[^\s]{2,}/,
+  match: /https:\/\/zh\.wikipedia\.org\/[^\s]{2,}/,
   transform: (m: RegExpMatchArray): Promise<EmbedConfig | null> =>
     createWikipediaEmbed(m[0]),
 };
