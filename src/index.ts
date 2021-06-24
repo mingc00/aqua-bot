@@ -1,7 +1,7 @@
 import process from 'process';
 import { APIMessage, Client, MessageEmbed, Intents } from 'discord.js';
 import { pttParserConfig } from './parser/ptt-parser.js';
-import { fbVideoParserConfig } from './parser/fb-parser.js';
+import { fbParserConfig, fbVideoParserConfig } from './parser/fb-parser.js';
 import { wikipediaParserConfig } from './parser/wikipedia-parser.js';
 import { lineTodayParserConfig } from './parser/line-today-parser.js';
 import { createMessageEmbed } from './embed.js';
@@ -71,6 +71,7 @@ bot
     try {
       for (const { match, transform } of [
         pttParserConfig,
+        fbParserConfig,
         fbVideoParserConfig,
         wikipediaParserConfig,
         lineTodayParserConfig,
