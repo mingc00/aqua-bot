@@ -24,9 +24,9 @@ export default function fbParser(
 } {
   const $ = cheerio.load(html);
   const title = $('title').text().replace(/\n/g, ' ');
-  const containerEl = $('.story_body_container');
-  const author = $('strong', containerEl).text();
-  const content = $('div[data-ft]', containerEl).eq(0).text();
+  const containerEl = $('.story_body_container').last();
+  const author = $('strong', containerEl).first().text();
+  const content = $('div[data-ft]', containerEl).last().text();
   const urlMatch = $('div>i.img', containerEl)
     .last()
     .attr('style')
@@ -43,28 +43,52 @@ export default function fbParser(
   };
 }
 
-async function createFbEmbed(path: string): Promise<EmbedConfig | null> {
+async function createFbEmbed(url: URL): Promise<EmbedConfig | null> {
   try {
-    const response = await requestInstance.get(
-      `https://m.facebook.com/${path}?_fb_noscript=1`
-    );
+    const testURL = new URL(url.toString());
+    testURL.hostname = 'm.facebook.com';
+    const noScriptKey = '_fb_noscript';
+    if (!testURL.searchParams.has(noScriptKey)) {
+      testURL.searchParams.append(noScriptKey, '1');
+    }
+    const response = await requestInstance.get(testURL.toString());
     const result = fbParser(response.data);
     if (!result) {
       return null;
     }
     return {
       ...result,
-      url: `https://www.facebook.com/${path}`,
+      url: url.toString(),
     };
   } catch (e) {
     return null;
   }
 }
 
+export const fbPermalinkParserConfig = {
+  match: /https:\/\/(?:www|m).facebook.com\/permalink.php/,
+  transform: (m: RegExpMatchArray): Promise<EmbedConfig | null> => {
+    const url = new URL(m[0]);
+    url.search = new URLSearchParams({
+      story_fbid: url.searchParams.get('story_fbid') || '',
+      id: url.searchParams.get('id') || '',
+    }).toString();
+    return createFbEmbed(url);
+  },
+};
+
 export const fbParserConfig = {
-  match: /https:\/\/(?:www|m).facebook.com\/([\w./]+)/,
-  transform: (m: RegExpMatchArray): Promise<EmbedConfig | null> =>
-    createFbEmbed(m[1]),
+  match: /https:\/\/(?:www|m).facebook.com\/[^\s]+/,
+  transform: (m: RegExpMatchArray): Promise<EmbedConfig | null> => {
+    let url = new URL(m[0]);
+    const multiPermalinks = url.searchParams.get('multi_permalinks');
+    if (multiPermalinks) {
+      url = new URL(`posts/${multiPermalinks}`, url);
+    } else {
+      url.search = '';
+    }
+    return createFbEmbed(url);
+  },
 };
 
 export const fbVideoParserConfig = {
@@ -74,7 +98,7 @@ export const fbVideoParserConfig = {
       const {
         request: { path },
       } = await requestInstance.head(m[0]);
-      return createFbEmbed(path);
+      return createFbEmbed(new URL(path));
     } catch (e) {
       return null;
     }
