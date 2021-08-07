@@ -1,5 +1,5 @@
 import process from 'process';
-import { APIMessage, Client, MessageEmbed, Intents } from 'discord.js';
+import { Client, MessageEmbed, Intents } from 'discord.js';
 import { pttParserConfig } from './parser/ptt-parser.js';
 import {
   fbPermalinkParserConfig,
@@ -68,7 +68,7 @@ bot
     });
     createNotifier(bot);
   })
-  .on('message', async (message) => {
+  .on('messageCreate', async (message) => {
     if (!message.author || message.author.bot || !message.content) {
       return;
     }
@@ -96,15 +96,9 @@ bot
       console.error(e);
     }
 
-    if (embed && message.channel) {
-      const apiMessage = APIMessage.create(message.channel, {
-        embeds: [embed],
-        reply: {
-          messageReference: message,
-        },
-      });
+    if (embed) {
       message.suppressEmbeds(true);
-      message.channel.send(apiMessage);
+      message.reply({ embeds: [embed] });
     }
   })
   .on('error', () => {
