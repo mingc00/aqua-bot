@@ -11,14 +11,22 @@ export async function createNotifier(client: Client): Promise<void> {
     await unlink(sock);
   } catch {}
 
+  if (!NOTIFY_USER) {
+    return;
+  }
+
   new Server((socket) => {
     let msg = '';
     socket.on('data', (chunk) => {
       msg += chunk;
     });
     socket.on('end', async () => {
-      const user = await client.users.fetch(NOTIFY_USER as `${bigint}`);
-      await user.send(msg);
+      try {
+        const user = await client.users.fetch(NOTIFY_USER as `${bigint}`);
+        await user.send(msg);
+      } catch (e) {
+        console.error(e);
+      }
     });
   }).listen(sock);
 }
