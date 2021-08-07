@@ -21,6 +21,9 @@ export async function createNotifier(client: Client): Promise<void> {
       msg += chunk;
     });
     socket.on('end', async () => {
+      if (!msg) {
+        return;
+      }
       try {
         const user = await client.users.fetch(NOTIFY_USER as `${bigint}`);
         await user.send(msg);
