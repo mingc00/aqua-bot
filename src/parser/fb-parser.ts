@@ -14,9 +14,7 @@ const requestInstance = axios.create({
   },
 });
 
-export default function fbParser(
-  html: string
-): {
+export default function fbParser(html: string): {
   title: string;
   description: string;
   author: string;
@@ -24,7 +22,7 @@ export default function fbParser(
 } {
   const $ = cheerio.load(html);
   const title = $('title').text().replace(/\n/g, ' ');
-  const containerEl = $('.story_body_container').last();
+  const containerEl = $('.story_body_container').first();
   const author = $('strong', containerEl).first().text();
   const content = $('div[data-ft]', containerEl).last().text();
   const urlMatch = $('div>i.img', containerEl)
@@ -85,7 +83,11 @@ export const fbParserConfig = {
     if (multiPermalinks) {
       url = new URL(`posts/${multiPermalinks}`, url);
     } else {
-      url.search = '';
+      [...url.searchParams.keys()]
+        .filter((k) => k !== 'v')
+        .forEach((k) => {
+          url.searchParams.delete(k);
+        });
     }
     return createFbEmbed(url);
   },
