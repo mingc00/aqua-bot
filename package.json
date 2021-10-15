@@ -1,7 +1,7 @@
 {
   "name": "aqua-bot",
   "type": "module",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "exports": "./dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -11,17 +11,16 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@discordjs/voice": "^0.5.5",
-    "axios": "^0.21.2",
+    "axios": "^0.23.0",
     "cheerio": "^1.0.0-rc.10",
     "discord.js": "^13.0.0"
   },
   "devDependencies": {
     "@types/node": "^16.4.13",
-    "@types/ws": "^7.4.7",
-    "@typescript-eslint/eslint-plugin": "^4.29.0",
-    "@typescript-eslint/parser": "^4.29.0",
-    "eslint": "^7.32.0",
+    "@types/ws": "^8.2.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "prettier": "^2.3.2",
     "ts-node": "^10.1.0",

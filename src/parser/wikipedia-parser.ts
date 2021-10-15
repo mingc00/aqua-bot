@@ -2,9 +2,7 @@ import axios from 'axios';
 import cheerio from 'cheerio';
 import type { EmbedConfig } from '../embed.js';
 
-export default function wikipediaParser(
-  html: string
-): {
+export default function wikipediaParser(html: string): {
   title: string;
   description: string;
 } {
@@ -20,7 +18,7 @@ export default function wikipediaParser(
 
 async function createWikipediaEmbed(url: string): Promise<EmbedConfig | null> {
   try {
-    const response = await axios.get(url, {
+    const response = await axios.get<string>(url, {
       headers: {
         'Accept-Language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
       },

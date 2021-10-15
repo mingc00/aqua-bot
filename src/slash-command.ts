@@ -26,7 +26,7 @@ export class SlashCommandController {
 
   public create(data: unknown): Promise<boolean> {
     return this.api
-      .post('', data)
+      .post<{ name: string; options: Array<{ name: string }> }>('', data)
       .then((resp) => {
         console.log(
           'create slash command:',

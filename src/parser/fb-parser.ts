@@ -5,7 +5,7 @@ import type { EmbedConfig } from '../embed.js';
 
 const requestInstance = axios.create({
   headers: {
-    Cookie: process.env.FB_COOKIE,
+    Cookie: process.env.FB_COOKIE || '',
     'Sec-Fetch-User': '?1',
     'User-Agent':
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36',
@@ -49,7 +49,7 @@ async function createFbEmbed(url: URL): Promise<EmbedConfig | null> {
     if (!testURL.searchParams.has(noScriptKey)) {
       testURL.searchParams.append(noScriptKey, '1');
     }
-    const response = await requestInstance.get(testURL.toString());
+    const response = await requestInstance.get<string>(testURL.toString());
     const result = fbParser(response.data);
     if (!result) {
       return null;

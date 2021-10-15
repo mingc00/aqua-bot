@@ -9,9 +9,7 @@ function matchMeta(content: string, property: string): string | null {
   return r ? r[1] : null;
 }
 
-function lineTodayParser(
-  html: string
-): {
+function lineTodayParser(html: string): {
   title: string;
   description: string;
   author: string;
@@ -28,7 +26,7 @@ function lineTodayParser(
 async function createLineTodayEmbed(path: string): Promise<EmbedConfig | null> {
   try {
     const url = `https://today.line.me/tw/${path}`;
-    const response = await axios.get(url);
+    const response = await axios.get<string>(url);
     const result = lineTodayParser(response.data);
     if (!result) {
       return null;

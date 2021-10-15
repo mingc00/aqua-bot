@@ -7,9 +7,7 @@ function matchMeta(content: string, property: string): string | null {
   return r ? r[1] : null;
 }
 
-function pttParser(
-  html: string
-): {
+function pttParser(html: string): {
   title: string;
   description: string;
   author: string;
@@ -23,7 +21,7 @@ function pttParser(
 
 async function createPTTEmbed(url: string): Promise<EmbedConfig | null> {
   try {
-    const response = await axios.get(url, {
+    const response = await axios.get<string>(url, {
       headers: {
         Cookie: 'over18=1',
       },
