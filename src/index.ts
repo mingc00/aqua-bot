@@ -11,7 +11,6 @@ import { lineTodayParserConfig } from './parser/line-today-parser.js';
 import { createMessageEmbed } from './embed.js';
 import ImageCommandHandler from './image-commands.js';
 import { SlashCommandController } from './slash-command.js';
-import { createNotifier } from './notification.js';
 
 const APP_ID = process.env.DISCORD_CLIENT_ID || '';
 const BOT_TOKEN = process.env.DISCORD_TOKEN || '';
@@ -66,7 +65,6 @@ bot
       }
       return null;
     });
-    createNotifier(bot);
   })
   .on('messageCreate', async (message) => {
     if (!message.author || message.author.bot || !message.content) {
