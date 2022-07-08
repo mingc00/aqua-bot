@@ -1,5 +1,5 @@
 import axios from 'axios';
-import cheerio from 'cheerio';
+import { load } from 'cheerio';
 import process from 'process';
 import type { EmbedConfig } from '../embed.js';
 
@@ -7,10 +7,16 @@ const requestInstance = axios.create({
   headers: {
     Cookie: process.env.FB_COOKIE || '',
     'Sec-Fetch-User': '?1',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': "macOS",
+    'sec-fetch-dest': 'document',
+    'sec-fetch-mode': 'navigate',
+    'accept-language': 'zh-TW,zh;q=0.9',
+    'sec-fetch-site': 'none',
     'User-Agent':
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36',
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36',
     'sec-ch-ua':
-      '"Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
+      '".Not/A)Brand";v="99", "Google Chrome";v="103", "Chromium";v="103"',
   },
 });
 
@@ -20,18 +26,13 @@ export default function fbParser(html: string): {
   author: string;
   thumbnail?: string;
 } {
-  const $ = cheerio.load(html);
+  const $ = load(html);
   const title = $('title').text().replace(/\n/g, ' ');
   const containerEl = $('.story_body_container').first();
   const author = $('strong', containerEl).first().text();
-  const content = $('div[data-ft]', containerEl).last().text();
-  const urlMatch = $('div>i.img', containerEl)
-    .last()
-    .attr('style')
-    ?.match(/url\('(.*)'\)/);
-  const thumbnail = urlMatch
-    ? decodeURIComponent(urlMatch[1].replace(/\\(\w+) /g, '%$1'))
-    : undefined;
+  const sections =  $('div[data-ft]', containerEl);
+  const content = sections.first().text();
+  const thumbnail = sections.length > 1 ? $('img', sections.last()).first().attr('src') : '';
 
   return {
     title: title.replace(`${author} - `, ''),
