@@ -1,5 +1,5 @@
 import process from 'process';
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, GatewayIntentBits, Events } from 'discord.js';
 import { pttParserConfig } from './parser/ptt-parser.js';
 import { wikipediaParserConfig } from './parser/wikipedia-parser.js';
 import { lineTodayParserConfig } from './parser/line-today-parser.js';
@@ -19,18 +19,22 @@ function matchURL(re: RegExp, content: string): RegExpMatchArray | null {
 }
 
 const bot = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
 });
 
 bot
-  .on('ready', () => {
+  .on(Events.ClientReady, () => {
     console.log('Aqua bot is ready');
     // Manage Message
     console.log(
       `https://discord.com/api/oauth2/authorize?client_id=${APP_ID}&permissions=8192&scope=bot%20applications.commands`
     );
   })
-  .on('messageCreate', async (message) => {
+  .on(Events.MessageCreate, async (message) => {
     if (!message.author || message.author.bot || !message.content) {
       return;
     }
