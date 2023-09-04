@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { EmbedConfig } from '../embed.js';
 
 function matchMeta(content: string, property: string): string | null {
@@ -26,8 +25,8 @@ function lineTodayParser(html: string): {
 async function createLineTodayEmbed(path: string): Promise<EmbedConfig | null> {
   try {
     const url = `https://today.line.me/tw/${path}`;
-    const response = await axios.get<string>(url);
-    const result = lineTodayParser(response.data);
+    const response = await fetch(url);
+    const result = lineTodayParser(await response.text());
     if (!result) {
       return null;
     }

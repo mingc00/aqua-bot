@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { EmbedConfig } from '../embed.js';
 
 function matchMeta(content: string, property: string): string | null {
@@ -21,12 +20,12 @@ function pttParser(html: string): {
 
 async function createPTTEmbed(url: string): Promise<EmbedConfig | null> {
   try {
-    const response = await axios.get<string>(url, {
+    const response = await fetch(url, {
       headers: {
         Cookie: 'over18=1',
       },
     });
-    const result = pttParser(response.data);
+    const result = pttParser(await response.text());
     if (!result) {
       return null;
     }

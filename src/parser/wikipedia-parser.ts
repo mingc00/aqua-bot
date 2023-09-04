@@ -1,12 +1,11 @@
-import axios from 'axios';
-import cheerio from 'cheerio';
+import { load } from 'cheerio';
 import type { EmbedConfig } from '../embed.js';
 
 export default function wikipediaParser(html: string): {
   title: string;
   description: string;
 } {
-  const $ = cheerio.load(html);
+  const $ = load(html);
   const title = $('title').text().trim();
   const description = $('#mw-content-text p').text().trim();
 
@@ -18,12 +17,12 @@ export default function wikipediaParser(html: string): {
 
 async function createWikipediaEmbed(url: string): Promise<EmbedConfig | null> {
   try {
-    const response = await axios.get<string>(url, {
+    const response = await fetch(url, {
       headers: {
         'Accept-Language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
       },
     });
-    const result = wikipediaParser(response.data);
+    const result = wikipediaParser(await response.text());
     if (!result) {
       return null;
     }
