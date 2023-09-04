@@ -1,11 +1,11 @@
 version: '3'
 services:
   bot:
-    image: node:16-alpine
+    image: node:20
     volumes:
       - .:/mnt
     working_dir: /mnt
     env_file:
       - discord.env
-    entrypoint: sh -c 'yarn install && yarn start'
+    entrypoint: sh -c 'corepack enable && pnpm install && pnpm start'
     restart: always
