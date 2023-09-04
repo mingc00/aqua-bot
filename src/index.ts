@@ -1,7 +1,7 @@
 import process from 'process';
 import { Client, GatewayIntentBits, Events } from 'discord.js';
 import { pttParserConfig } from './parser/ptt-parser.js';
-import { wikipediaParserConfig } from './parser/wikipedia-parser.js';
+// import { wikipediaParserConfig } from './parser/wikipedia-parser.js';
 import { lineTodayParserConfig } from './parser/line-today-parser.js';
 import { createMessageEmbed } from './embed.js';
 
@@ -43,7 +43,7 @@ bot
     try {
       for (const { match, transform } of [
         pttParserConfig,
-        wikipediaParserConfig,
+        // wikipediaParserConfig,
         lineTodayParserConfig,
       ]) {
         const m = matchURL(match, content);
