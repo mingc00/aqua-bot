@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 
 export interface EmbedConfig {
   url: string;
@@ -14,8 +14,9 @@ export function createMessageEmbed({
   author = '',
   description = '',
   thumbnail,
-}: EmbedConfig): MessageEmbed {
-  const embed = new MessageEmbed()
+}: EmbedConfig): EmbedBuilder {
+
+  const embed = new EmbedBuilder()
     .setURL(url)
     .setTitle(title)
     .setDescription(
@@ -25,7 +26,7 @@ export function createMessageEmbed({
     );
 
   if (author) {
-    embed.setAuthor(author);
+    embed.setAuthor({ name: author });
   }
   if (thumbnail) {
     embed.setThumbnail(thumbnail);

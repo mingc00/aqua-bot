@@ -1,5 +1,5 @@
 import process from 'process';
-import { Client, MessageEmbed, Intents } from 'discord.js';
+import { Client, GatewayIntentBits } from 'discord.js';
 import { pttParserConfig } from './parser/ptt-parser.js';
 import {
   fbPermalinkParserConfig,
@@ -24,7 +24,7 @@ function matchURL(re: RegExp, content: string): RegExpMatchArray | null {
 }
 
 const bot = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 });
 
 bot
@@ -40,7 +40,7 @@ bot
       return;
     }
     const content = message.content;
-    let embed: MessageEmbed | null = null;
+    let embed: ReturnType<typeof createMessageEmbed> | null = null;
     try {
       for (const { match, transform } of [
         pttParserConfig,
