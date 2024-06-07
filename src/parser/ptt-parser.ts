@@ -35,8 +35,24 @@ async function createPTTEmbed(url: string): Promise<EmbedConfig | null> {
   }
 }
 
+async function isRedirection(url: string): Promise<boolean> {
+  try {
+    const response = await fetch(url, {
+      method: 'HEAD',
+    });
+    return response.status === 304;
+  } catch {
+    return false;
+  }
+}
+
 export const pttParserConfig = {
-  match: /https?:\/\/www.ptt.cc\/bbs\/gossiping\/[\w.]+.html/i,
-  transform: (m: RegExpMatchArray): Promise<EmbedConfig | null> =>
-    createPTTEmbed(m[0]),
+  match: /https?:\/\/www.ptt.cc\/bbs\/[\w-]+\/[\w.]+.html/i,
+  transform: async (m: RegExpMatchArray): Promise<EmbedConfig | null> => {
+    const url = m[0];
+    if (!(await isRedirection(url))) {
+      return null;
+    }
+    return await createPTTEmbed(url);
+  },
 };
