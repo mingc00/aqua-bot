@@ -15,7 +15,6 @@ export function createMessageEmbed({
   description = '',
   thumbnail,
 }: EmbedConfig): EmbedBuilder {
-
   const embed = new EmbedBuilder()
     .setURL(url)
     .setTitle(title)
