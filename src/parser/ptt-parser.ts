@@ -39,8 +39,9 @@ async function isRedirection(url: string): Promise<boolean> {
   try {
     const response = await fetch(url, {
       method: 'HEAD',
+      redirect: 'manual',
     });
-    return response.status === 304;
+    return response.status === 302;
   } catch {
     return false;
   }
